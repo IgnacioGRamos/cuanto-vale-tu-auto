@@ -267,55 +267,165 @@ def chart_test_real_vs_pred(df_test: pd.DataFrame) -> alt.Chart:
 def chart_error_por_tramo(metricas: dict = None) -> alt.Chart:
     """
     g-tramos (El modelo):
-    Barras de MAE por tramo de precio del mercado automotor.
+    Gráfico de doble eje con barras agrupadas lado a lado (side-by-side):
+    - Barra Azul (#0b5d7a): MAE absoluto en USD (eje izquierdo).
+    - Barra Naranja (#d95926): Error relativo mediano en % (eje derecho secundario).
+    Etiquetas numéricas formateadas encima de cada barra y tooltips interactivos.
     """
-    df_tramos = pd.DataFrame([
-        {"tramo": "USD 1k–8k", "mae": 633, "rel": 0.076, "n": 368, "texto": "USD 633\n(7.6%)"},
-        {"tramo": "USD 8k–10k", "mae": 710, "rel": 0.065, "n": 348, "texto": "USD 710\n(6.5%)"},
-        {"tramo": "USD 10k–13k", "mae": 879, "rel": 0.061, "n": 353, "texto": "USD 879\n(6.1%)"},
-        {"tramo": "USD 13k–19k", "mae": 1199, "rel": 0.060, "n": 356, "texto": "USD 1,199\n(6.0%)"},
-        {"tramo": "USD 19k–105k", "mae": 3856, "rel": 0.080, "n": 357, "texto": "USD 3,856\n(8.0%)"}
-    ])
+    fallback_tramos = [
+        {"tramo": "USD 1k–8k", "mae": 626.0, "error_rel": 8.0, "n": 368},
+        {"tramo": "USD 8k–10k", "mae": 710.0, "error_rel": 6.5, "n": 348},
+        {"tramo": "USD 10k–13k", "mae": 879.0, "error_rel": 6.1, "n": 353},
+        {"tramo": "USD 13k–19k", "mae": 1199.0, "error_rel": 6.0, "n": 356},
+        {"tramo": "USD 19k–105k", "mae": 3856.0, "error_rel": 8.0, "n": 357}
+    ]
 
-    barras = (
+    raw_tramos = None
+    if isinstance(metricas, dict):
+        raw_tramos = metricas.get("error_por_tramo")
+    
+    if not raw_tramos:
+        raw_tramos = fallback_tramos
+
+    rows = []
+    for item in raw_tramos:
+        tramo = str(item.get("tramo", ""))
+        if not tramo.startswith("USD"):
+            tramo = f"USD {tramo}"
+        mae = float(item.get("mae", 0.0))
+        rel_raw = float(item.get("error_rel", item.get("rel", 0.0)))
+        # Escalar a porcentaje si viene en escala decimal 0.0-1.0
+        rel_pct = rel_raw * 100.0 if rel_raw < 1.0 else rel_raw
+        n_count = int(item.get("n", 0))
+
+        rows.append({
+            "tramo": tramo,
+            "mae": mae,
+            "rel": rel_pct,
+            "n": n_count,
+            "lbl_mae": f"{int(round(mae)):,}".replace(",", "."),
+            "lbl_rel": f"{rel_pct:.1f}%"
+        })
+
+    df_tramos = pd.DataFrame(rows)
+    tramos_order = list(df_tramos["tramo"])
+    bar_width = 28
+    offset = 16
+
+    max_mae = df_tramos["mae"].max() if len(df_tramos) > 0 else 4000.0
+    max_rel = df_tramos["rel"].max() if len(df_tramos) > 0 else 10.0
+
+    # Barra 1: MAE en USD (Azul institucional #0b5d7a, Eje izquierdo)
+    mae_bar = (
         alt.Chart(df_tramos)
-        .mark_bar(color=COLOR_AZUL, cornerRadiusTopLeft=3, cornerRadiusTopRight=3)
+        .mark_bar(
+            color="#0b5d7a",
+            width=bar_width,
+            xOffset=-offset,
+            cornerRadiusTopLeft=3,
+            cornerRadiusTopRight=3
+        )
         .encode(
             x=alt.X(
                 "tramo:N",
-                sort=["USD 1k–8k", "USD 8k–10k", "USD 10k–13k", "USD 13k–19k", "USD 19k–105k"],
-                title="Tramo de precio (USD)",
+                sort=tramos_order,
+                title="Tramo de mercado (USD)",
                 axis=alt.Axis(labelAngle=0, domainColor="#bbbbbb", gridColor="#ececec")
             ),
             y=alt.Y(
                 "mae:Q",
-                title="MAE (USD)",
-                axis=alt.Axis(grid=True, gridColor="#ececec", domainColor="#bbbbbb", format="$,.0f")
+                title="MAE absoluto (USD)",
+                scale=alt.Scale(domain=[0, float(max_mae * 1.18)]),
+                axis=alt.Axis(
+                    format="$,.0f",
+                    grid=True,
+                    gridColor="#ececec",
+                    domainColor="#bbbbbb",
+                    titleColor="#0b5d7a"
+                )
             ),
             tooltip=[
-                alt.Tooltip("tramo:N", title="Tramo"),
-                alt.Tooltip("mae:Q", title="MAE (USD)", format="$,.0f"),
-                alt.Tooltip("rel:Q", title="Error relativo mediano", format=".1%"),
-                alt.Tooltip("n:Q", title="Autos", format=",")
+                alt.Tooltip("tramo:N", title="Tramo de mercado"),
+                alt.Tooltip("mae:Q", title="MAE absoluto", format="$,.0f"),
+                alt.Tooltip("rel:Q", title="Error relativo mediano (%)", format=".1f"),
+                alt.Tooltip("n:Q", title="Autos en test", format=",")
             ]
         )
     )
 
-    texto = (
+    mae_txt = (
         alt.Chart(df_tramos)
-        .mark_text(color="#1a1a1a", dy=-8, fontSize=10, fontWeight=600)
+        .mark_text(
+            color="#0b5d7a",
+            fontSize=10,
+            fontWeight=700,
+            dy=-8,
+            xOffset=-offset
+        )
         .encode(
-            x=alt.X("tramo:N", sort=["USD 1k–8k", "USD 8k–10k", "USD 10k–13k", "USD 13k–19k", "USD 19k–105k"]),
+            x=alt.X("tramo:N", sort=tramos_order),
             y="mae:Q",
-            text=alt.Text("mae:Q", format="$,.0f")
+            text=alt.Text("lbl_mae:N")
         )
     )
 
-    return (
-        (barras + texto)
-        .properties(height=300, width="container")
+    # Barra 2: Error relativo en % (Naranja #d95926, Eje derecho secundario)
+    rel_bar = (
+        alt.Chart(df_tramos)
+        .mark_bar(
+            color="#d95926",
+            width=bar_width,
+            xOffset=offset,
+            cornerRadiusTopLeft=3,
+            cornerRadiusTopRight=3
+        )
+        .encode(
+            x=alt.X("tramo:N", sort=tramos_order),
+            y=alt.Y(
+                "rel:Q",
+                title="Error relativo mediano (%)",
+                scale=alt.Scale(domain=[0, float(max_rel * 1.25)]),
+                axis=alt.Axis(
+                    format=".1f",
+                    orient="right",
+                    grid=False,
+                    domainColor="#bbbbbb",
+                    titleColor="#d95926"
+                )
+            ),
+            tooltip=[
+                alt.Tooltip("tramo:N", title="Tramo de mercado"),
+                alt.Tooltip("mae:Q", title="MAE absoluto", format="$,.0f"),
+                alt.Tooltip("rel:Q", title="Error relativo mediano (%)", format=".1f"),
+                alt.Tooltip("n:Q", title="Autos en test", format=",")
+            ]
+        )
+    )
+
+    rel_txt = (
+        alt.Chart(df_tramos)
+        .mark_text(
+            color="#d95926",
+            fontSize=10,
+            fontWeight=700,
+            dy=-8,
+            xOffset=offset
+        )
+        .encode(
+            x=alt.X("tramo:N", sort=tramos_order),
+            y="rel:Q",
+            text=alt.Text("lbl_rel:N")
+        )
+    )
+
+    chart = (
+        alt.layer(mae_bar, mae_txt, rel_bar, rel_txt)
+        .resolve_scale(y="independent")
+        .properties(height=320, width="container")
         .configure_view(stroke=None)
     )
+
+    return chart
 
 
 def chart_explora_scatter(df_filtrado: pd.DataFrame) -> alt.Chart:

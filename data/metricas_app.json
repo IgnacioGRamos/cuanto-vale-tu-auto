@@ -1,6 +1,38 @@
 {
     "mae_test": 1363.727582541032,
     "error_relativo_mediano": 0.06949414251365604,
+    "error_por_tramo": [
+        {
+            "tramo": "USD 1k–7k",
+            "mae": 722.1,
+            "error_rel": 9.4,
+            "n": 361
+        },
+        {
+            "tramo": "USD 7k–9k",
+            "mae": 735.9,
+            "error_rel": 6.8,
+            "n": 334
+        },
+        {
+            "tramo": "USD 9k–12k",
+            "mae": 824.6,
+            "error_rel": 6.1,
+            "n": 351
+        },
+        {
+            "tramo": "USD 12k–19k",
+            "mae": 1401.4,
+            "error_rel": 6.3,
+            "n": 343
+        },
+        {
+            "tramo": "USD 19k–104k",
+            "mae": 3143.6,
+            "error_rel": 6.6,
+            "n": 347
+        }
+    ],
     "portada": {
         "mae_test_usd": 1363.7,
         "mae_baseline_usd": 6201.5,

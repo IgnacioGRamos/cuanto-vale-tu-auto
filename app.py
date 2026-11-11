@@ -384,6 +384,11 @@ st.markdown(
       <p class="nota">Cada punto es un auto del test. El color indica la moneda original del aviso. La brecha crece con el precio: el modelo subestima en promedio <strong>USD 3.179</strong> los autos publicados en USD, contra <strong>USD 6</strong> en los publicados en pesos.</p>
       <h3 style="margin-top:26px">El error por tramo de precio</h3>
       <p>El MAE no es parejo: se multiplica por seis entre el tramo más barato y el más caro. El error relativo mediano, en cambio, se mantiene alrededor del 6–8 %: el modelo se equivoca más en dólares, pero no mucho más en porcentaje.</p>
+      <div class="leyenda" style="margin: 10px 0 6px;" aria-label="Leyenda de métricas">
+        <span class="leyenda-titulo">Métrica</span>
+        <span><i style="background:#0b5d7a"></i>MAE absoluto (USD, eje izq.)</span>
+        <span><i style="background:#d95926"></i>Error relativo mediano (%, eje der.)</span>
+      </div>
     """,
     unsafe_allow_html=True,
 )

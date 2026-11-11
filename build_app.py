@@ -196,6 +196,27 @@ def main():
     med_rel_error = porcentaje_margen
     spearman_corr = float(df["fabricado_en"].corr(df["precio_usd"], method="spearman"))
 
+    # Comportamiento del error por tramo de mercado (5 quintiles en Test, Entrega 3)
+    tramos = pd.qcut(y_test, 5, duplicates="drop")
+    df_tramos_eval = pd.DataFrame({
+        "abs": err,
+        "rel": rel * 100.0,
+        "tramo": tramos
+    }).groupby("tramo", observed=True).agg(
+        mae=("abs", "mean"),
+        error_rel=("rel", "median"),
+        n=("abs", "count")
+    )
+    error_por_tramo = []
+    for iv, row in df_tramos_eval.iterrows():
+        tramo_lbl = f"USD {iv.left/1000:,.0f}k–{iv.right/1000:,.0f}k"
+        error_por_tramo.append({
+            "tramo": tramo_lbl,
+            "mae": round(float(row["mae"]), 1),
+            "error_rel": round(float(row["error_rel"]), 1),
+            "n": int(row["n"])
+        })
+
     print(f"      -> MAE en Test: USD {mae_test:,.0f}")
     print(f"      -> Error relativo mediano en Test: {porcentaje_margen:.1%}")
     print(f"      -> R² en Test: {r2_test:.3f}")
@@ -228,6 +249,7 @@ def main():
     metricas = {
         "mae_test": float(mae_test),
         "error_relativo_mediano": porcentaje_margen,
+        "error_por_tramo": error_por_tramo,
         "portada": {
             "mae_test_usd": round(mae_test, 1),
             "mae_baseline_usd": 6201.5,
