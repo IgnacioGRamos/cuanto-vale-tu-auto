@@ -67,6 +67,27 @@ st.markdown(
     div[data-testid="stHorizontalBlock"] {
         gap: 1.5rem !important;
     }
+
+    /* Barra lateral permanentemente fija e incolapsable */
+    [data-testid="collapsedControl"],
+    [data-testid="stSidebarCollapseButton"],
+    div[data-testid="stSidebarHeader"] button,
+    section[data-testid="stSidebar"] button[kind="header"],
+    button[aria-label="Close sidebar"],
+    button[aria-label="Collapse sidebar"] {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    section[data-testid="stSidebar"],
+    section[data-testid="stSidebar"][aria-expanded="false"] {
+        display: flex !important;
+        transform: none !important;
+        visibility: visible !important;
+        min-width: 250px !important;
+        max-width: 280px !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,

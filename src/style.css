@@ -51,7 +51,22 @@ div[data-testid="stHorizontalBlock"] {
 }
 
 /* Sidebar Navigation */
-section[data-testid="stSidebar"] {
+[data-testid="collapsedControl"],
+[data-testid="stSidebarCollapseButton"],
+div[data-testid="stSidebarHeader"] button,
+section[data-testid="stSidebar"] button[kind="header"],
+button[aria-label="Close sidebar"],
+button[aria-label="Collapse sidebar"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+section[data-testid="stSidebar"],
+section[data-testid="stSidebar"][aria-expanded="false"] {
+  display: flex !important;
+  transform: none !important;
+  visibility: visible !important;
   background-color: #fafbfc !important;
   border-right: 1px solid var(--linea) !important;
   min-width: 250px !important;
