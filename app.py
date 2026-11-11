@@ -167,7 +167,7 @@ with st.sidebar:
             <li>Ramos, Ignacio</li>
             <li>Velasco, Victoria</li>
             <li>Via, Tomás</li>
-            <li>Nicolas, Sergio</li>
+            <li>Villanueva, Sergio</li>
           </ul>
           <div class="tallo">
             <h3>El tallo · la historia</h3>
