@@ -30,6 +30,7 @@ from src.charts import (
     chart_test_real_vs_pred,
     chart_error_por_tramo,
     chart_explora_scatter,
+    chart_ubicacion_h4,
 )
 
 # -----------------------------------------------------------------------------
@@ -331,8 +332,47 @@ st.altair_chart(chart_drop, use_container_width=True)
 st.markdown(
     """
       <p class="nota">Cada barra mide cuánto sube el MAE al sacar esa columna, con la misma validación agrupada. La línea punteada marca un desvío del modelo de referencia (USD 66): lo que no la supera no se distingue del ruido.</p>
+      
+      <h3 style="margin-top:32px">La ubicación no mueve la aguja: 121 categorías y bajo poder explicativo (H4)</h3>
+      <p>En el análisis exploratorio se normalizó la procedencia de los avisos en 121 categorías geográficas (provincia y localidad). La distribución resultó hiperdesbalanceada: pocos centros urbanos concentran la gran masa de publicaciones, mientras decenas de localidades registran menos de 5 autos. Al contrastar precios entre plazas, la razón de correlación (<strong>η² = 0,034</strong>) cayó en la <em>zona roja</em> del semáforo metodológico (< 0,05), evidenciando que las diferencias de valor entre ciudades son insignificantes frente a la dispersión natural del mercado y que incluirla en el modelo sólo sumaría ruido y riesgo de sobreajuste.</p>
+
+      <div class="tarjetas" style="margin: 14px 0 16px;">
+        <div class="tarjeta-stat" style="background:#ffffff; border:1px solid #e8ebee; border-radius:10px; padding:12px 16px;">
+          <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:#5a6578; font-weight:600;">Categorías normalizadas</span>
+          <p style="font-size:26px; font-weight:700; color:#0b5d7a; margin:4px 0 0;">121</p>
+          <span style="font-size:12px; color:#5a6578;">Alta cardinalidad y fuerte asimetría</span>
+        </div>
+        <div class="tarjeta-stat" style="background:#ffffff; border:1px solid #e8ebee; border-radius:10px; padding:12px 16px;">
+          <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:#5a6578; font-weight:600;">Razón de correlación (η²)</span>
+          <p style="font-size:26px; font-weight:700; color:#d95926; margin:4px 0 0;">0,034 <span style="font-size:12px; font-weight:600; padding:2px 6px; background:#fee2e2; color:#991b1b; border-radius:4px; vertical-align:middle;">Zona Roja</span></p>
+          <span style="font-size:12px; color:#5a6578;">Explica apenas el 3,4 % de la varianza</span>
+        </div>
+        <div class="tarjeta-stat" style="background:#ffffff; border:1px solid #e8ebee; border-radius:10px; padding:12px 16px;">
+          <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:#5a6578; font-weight:600;">Decisión de modelado</span>
+          <p style="font-size:24px; font-weight:700; color:#0b5d7a; margin:4px 0 0;">Excluida</p>
+          <span style="font-size:12px; color:#5a6578;">Descarte preventivo contra sobreajuste</span>
+        </div>
+      </div>
+      <div class="leyenda" style="margin: 8px 0 6px;" aria-label="Leyenda de ubicación">
+        <span class="leyenda-titulo">Referencia</span>
+        <span><i style="background:#0b5d7a"></i>Precio mediano por plaza (USD)</span>
+        <span><i style="background:#d95926; border-radius:0; height:2px;"></i>Mediana global de mercado (USD 10.735)</span>
+      </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Gráfico de H4 ubicación geográfica con ancho responsivo
+chart_ubi = chart_ubicacion_h4()
+st.altair_chart(chart_ubi, use_container_width=True)
+
+st.markdown(
+    """
+      <p class="nota">Comparación de precios medianos en las principales plazas con mayor volumen de publicaciones frente a la mediana global del mercado (USD 10.735). La paridad de valores corrobora que la localización no introduce distorsiones sistemáticas.</p>
       <details>
         <summary>Cómo lo sabemos</summary>
+        <h4>Hipótesis H4: Descarte de ubicación geográfica</h4>
+        <p>Se evaluó la señal de <code>ubicacion</code> normalizada en 121 categorías geográficas mediante la razón de correlación (<strong>η² = 0,0341</strong>, zona roja de la cátedra por debajo de 0,05). Como se observa en el gráfico, los precios medianos de las plazas principales oscilan de forma indistinguible en torno a la mediana global (USD 10.735). Mantener 121 categorías con decenas de localidades que sólo aportan 1 o 2 avisos forzaría al modelo a memorizar anomalías puntuales en lugar de aprender patrones vehiculares genuinos. Por estas razones, la variable fue excluida definitivamente de la etapa de modelado predictivo.</p>
         <h4>Una hipótesis que se sostuvo</h4>
         <p><strong>El año es la variable que más aporta.</strong> Sin <code>fabricado_en</code> el MAE sube <strong>USD 411</strong> (6,2 desvíos). La importancia por permutación lo confirma: desordenar el año empeora el MAE unos <strong>USD 3.001</strong>, muy por encima del resto.</p>
         <h4>Una que no se sostuvo</h4>
@@ -353,7 +393,7 @@ st.markdown(
             <tr><td>sin traccion ni combustible</td><td>1.499,9</td><td>60,7</td><td>29,4</td><td>0,4</td></tr>
           </tbody>
         </table></div>
-        <h4>Cómo se construyó el gráfico</h4>
+        <h4>Cómo se construyó el gráfico de impacto</h4>
         <p>Se parte del <code>HistGradientBoosting</code> de referencia y se quita una columna por vez, manteniendo la misma validación <code>GroupKFold</code> de 5 pedazos agrupada por vehículo. La diferencia se mide contra la referencia; una diferencia menor a un desvío no es evidencia de nada.</p>
       </details>
     </section>

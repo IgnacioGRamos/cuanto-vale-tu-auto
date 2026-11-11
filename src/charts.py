@@ -431,6 +431,109 @@ def chart_error_por_tramo(metricas: dict = None) -> alt.Chart:
     return chart
 
 
+def chart_ubicacion_h4() -> alt.Chart:
+    """
+    g-ubicacion (Lo que encontramos · H4):
+    Comparativa de precio mediano en las principales plazas geográficas
+    demostrando la ausencia de variación sistemática (η² = 0,034, zona roja).
+    """
+    data_plazas = pd.DataFrame([
+        {"plaza": "San Juan Capital", "precio_mediano": 10543, "n": 317, "pct_muestra": "3,6%"},
+        {"plaza": "Córdoba Capital", "precio_mediano": 10160, "n": 1228, "pct_muestra": "14,1%"},
+        {"plaza": "Mendoza San Martín", "precio_mediano": 9904, "n": 379, "pct_muestra": "4,3%"},
+        {"plaza": "Mendoza Guaymallén", "precio_mediano": 9393, "n": 1488, "pct_muestra": "17,1%"},
+        {"plaza": "Mendoza Godoy Cruz", "precio_mediano": 9265, "n": 1355, "pct_muestra": "15,5%"},
+        {"plaza": "Mendoza Maipú", "precio_mediano": 8882, "n": 646, "pct_muestra": "7,4%"},
+        {"plaza": "Mendoza Capital", "precio_mediano": 8307, "n": 1174, "pct_muestra": "13,5%"},
+        {"plaza": "Mendoza Luján de Cuyo", "precio_mediano": 8307, "n": 438, "pct_muestra": "5,0%"}
+    ])
+
+    mediana_global = 10735.0
+    max_precio = 13000.0
+
+    barras = (
+        alt.Chart(data_plazas)
+        .mark_bar(
+            color="#0b5d7a",
+            cornerRadiusTopRight=3,
+            cornerRadiusBottomRight=3,
+            height=18
+        )
+        .encode(
+            x=alt.X(
+                "precio_mediano:Q",
+                title="Precio mediano de publicación (USD)",
+                scale=alt.Scale(domain=[0, max_precio]),
+                axis=alt.Axis(
+                    format="$,.0f",
+                    grid=True,
+                    gridColor="#ececec",
+                    domainColor="#bbbbbb"
+                )
+            ),
+            y=alt.Y(
+                "plaza:N",
+                sort="-x",
+                title=None,
+                axis=alt.Axis(
+                    labelFontSize=11,
+                    domainColor="#bbbbbb",
+                    tickColor="#bbbbbb"
+                )
+            ),
+            tooltip=[
+                alt.Tooltip("plaza:N", title="Plaza geográfica"),
+                alt.Tooltip("precio_mediano:Q", title="Precio mediano", format="$,.0f"),
+                alt.Tooltip("n:Q", title="Avisos analizados", format=","),
+                alt.Tooltip("pct_muestra:N", title="Participación")
+            ]
+        )
+    )
+
+    texto = (
+        alt.Chart(data_plazas)
+        .mark_text(
+            align="left",
+            baseline="middle",
+            dx=6,
+            fontSize=10,
+            fontWeight=600,
+            color="#0b5d7a"
+        )
+        .encode(
+            x="precio_mediano:Q",
+            y=alt.Y("plaza:N", sort="-x"),
+            text=alt.Text("precio_mediano:Q", format="$,.0f")
+        )
+    )
+
+    # Línea de referencia: Mediana global de mercado
+    df_ref = pd.DataFrame([{"x": mediana_global, "label": "Mediana global de mercado (USD 10.735)"}])
+    linea = (
+        alt.Chart(df_ref)
+        .mark_rule(
+            color="#d95926",
+            strokeDash=[5, 5],
+            strokeWidth=2
+        )
+        .encode(
+            x="x:Q",
+            tooltip=[
+                alt.Tooltip("label:N", title="Referencia"),
+                alt.Tooltip("x:Q", title="Valor", format="$,.0f")
+            ]
+        )
+    )
+
+    chart = (
+        alt.layer(barras, texto, linea)
+        .properties(height=260, width="container")
+        .configure_view(stroke=None)
+    )
+
+    return chart
+
+
 def chart_explora_scatter(df_filtrado: pd.DataFrame) -> alt.Chart:
     """
     g-explora (La copa · Explorá):
