@@ -12,12 +12,6 @@ import pandas as pd
 import streamlit as st
 
 # Importaciones modulares internas del repositorio
-import importlib
-import src.charts
-import src.utils
-importlib.reload(src.charts)
-importlib.reload(src.utils)
-
 from src.utils import (
     load_data,
     load_metrics,
