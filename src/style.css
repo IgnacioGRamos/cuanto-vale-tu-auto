@@ -85,7 +85,19 @@ nav.nav-sidebar .marca {
   font-size: 12.5px;
   line-height: 1.45;
   color: var(--gris);
-  margin: 0 0 20px;
+  margin: 0 0 10px;
+}
+
+nav.nav-sidebar .equipo-lista {
+  list-style-type: disc;
+  margin: 0 0 20px 0;
+  padding: 0 0 0 16px;
+}
+
+nav.nav-sidebar .equipo-lista li {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--gris);
 }
 
 nav.nav-sidebar h3 {

@@ -88,6 +88,17 @@ st.markdown(
         min-width: 250px !important;
         max-width: 280px !important;
     }
+
+    nav.nav-sidebar .equipo-lista {
+        list-style-type: disc !important;
+        margin: 0 0 20px 0 !important;
+        padding: 0 0 0 16px !important;
+    }
+    nav.nav-sidebar .equipo-lista li {
+        font-size: 12px !important;
+        line-height: 1.5 !important;
+        color: var(--gris, #5a6578) !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -151,6 +162,13 @@ with st.sidebar:
         """
         <nav class="nav-sidebar">
           <p class="marca">Ciencia de Datos · UTN FRM · 2026<br>Proyecto Integrador · 5K09-03</p>
+          <ul class="equipo-lista">
+            <li>Garcia, Nicolás</li>
+            <li>Ramos, Ignacio</li>
+            <li>Velasco, Victoria</li>
+            <li>Via, Tomás</li>
+            <li>Nicolas, Sergio</li>
+          </ul>
           <div class="tallo">
             <h3>El tallo · la historia</h3>
             <ol>
