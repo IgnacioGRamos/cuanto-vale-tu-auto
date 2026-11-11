@@ -1,0 +1,46 @@
+# Capa Bronze y volcados pesados de scraping
+pipeline/include/output/bronze/
+*.html
+*.html.gz
+*.zip
+
+# Cache y entornos locales
+__pycache__/
+*.py[cod]
+*$py.class
+src/__pycache__/
+pipeline/__pycache__/
+.astro/
+pipeline/.astro/
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# Checkpoints y temporales de Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+*.ipynb_checkpoints
+
+# Logs y bases de Apache Airflow
+logs/
+pipeline/logs/
+*.log
+airflow.cfg
+airflow.db
+unittests.cfg
+
+# Datos crudos estáticos previos
+data/dataset_raw.csv
+
+# Temporales de compilación y SO
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.temp
+.vscode/
+
+# Secretos de Streamlit
+.streamlit/secrets.toml

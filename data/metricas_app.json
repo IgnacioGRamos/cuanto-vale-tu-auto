@@ -1,0 +1,137 @@
+{
+    "mae_test": 1363.727582541032,
+    "error_relativo_mediano": 0.06949414251365604,
+    "portada": {
+        "mae_test_usd": 1363.7,
+        "mae_baseline_usd": 6201.5,
+        "error_relativo_mediano_pct": 6.9,
+        "reduccion_error_pct": 78.0,
+        "r2_test": 0.928,
+        "spearman_corr": 0.76,
+        "total_autos": 8635,
+        "total_test": 1736
+    },
+    "test": {
+        "mae": 1363.7,
+        "error_relativo_mediano": 0.06949414251365604,
+        "r2": 0.928,
+        "n_test": 1736,
+        "med_rel_error": 6.95
+    },
+    "modelos_cv": [
+        {
+            "modelo": "Piso (Dummy Mediana)",
+            "mae": 6201.5,
+            "std": 189.5,
+            "r2": -0.08,
+            "familia": "Baseline"
+        },
+        {
+            "modelo": "Regresión Ridge (log)",
+            "mae": 2143.1,
+            "std": 122.8,
+            "r2": 0.72,
+            "familia": "Lineal"
+        },
+        {
+            "modelo": "Bosque Aleatorio",
+            "mae": 1532.8,
+            "std": 113.0,
+            "r2": 0.86,
+            "familia": "Bagging"
+        },
+        {
+            "modelo": "HistGradientBoosting Base",
+            "mae": 1477.7,
+            "std": 110.1,
+            "r2": 0.87,
+            "familia": "Boosting"
+        },
+        {
+            "modelo": "HistGradBoost Optimizado (GridSearch)",
+            "mae": 1412.0,
+            "std": 105.0,
+            "r2": 0.88,
+            "familia": "Ganador"
+        }
+    ],
+    "importancia_variables": [
+        {
+            "columna": "fabricado_en",
+            "caida_mae_usd": 3102.7,
+            "std": 133.0
+        },
+        {
+            "columna": "potencia_hp",
+            "caida_mae_usd": 1565.8,
+            "std": 47.7
+        },
+        {
+            "columna": "marca",
+            "caida_mae_usd": 1207.9,
+            "std": 33.9
+        },
+        {
+            "columna": "modelo",
+            "caida_mae_usd": 602.1,
+            "std": 15.9
+        },
+        {
+            "columna": "kilometraje",
+            "caida_mae_usd": 496.0,
+            "std": 32.1
+        },
+        {
+            "columna": "transmision",
+            "caida_mae_usd": 330.4,
+            "std": 9.4
+        },
+        {
+            "columna": "motor_lt",
+            "caida_mae_usd": 171.8,
+            "std": 22.1
+        },
+        {
+            "columna": "traccion",
+            "caida_mae_usd": 133.1,
+            "std": 6.3
+        },
+        {
+            "columna": "consumo_lt_100km",
+            "caida_mae_usd": 102.0,
+            "std": 6.5
+        },
+        {
+            "columna": "combustible",
+            "caida_mae_usd": 52.3,
+            "std": 1.5
+        }
+    ],
+    "tramo_mercado_error": [
+        {
+            "tramo": "0 - 10k USD",
+            "mae_usd": 940,
+            "err_rel_pct": 9.2
+        },
+        {
+            "tramo": "10k - 18k USD",
+            "mae_usd": 1180,
+            "err_rel_pct": 6.1
+        },
+        {
+            "tramo": "18k - 28k USD",
+            "mae_usd": 1520,
+            "err_rel_pct": 5.4
+        },
+        {
+            "tramo": "28k - 45k USD",
+            "mae_usd": 2350,
+            "err_rel_pct": 6.5
+        },
+        {
+            "tramo": "> 45k USD",
+            "mae_usd": 3720,
+            "err_rel_pct": 7.8
+        }
+    ]
+}
