@@ -418,10 +418,13 @@ def chart_error_por_tramo(metricas: dict = None) -> alt.Chart:
         )
     )
 
+    c_mae = alt.layer(mae_bar, mae_txt)
+    c_rel = alt.layer(rel_bar, rel_txt)
+
     chart = (
-        alt.layer(mae_bar, mae_txt, rel_bar, rel_txt)
+        alt.layer(c_mae, c_rel)
         .resolve_scale(y="independent")
-        .properties(height=320, width="container")
+        .properties(height=340, width="container")
         .configure_view(stroke=None)
     )
 
