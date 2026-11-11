@@ -297,6 +297,26 @@ p, li {
   line-height: 1.4;
 }
 
+/* Tarjetas de estadísticas en grilla (ej. H4 ubicación) */
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin: 16px 0 20px;
+  width: 100%;
+}
+
+.tarjeta-stat {
+  background: #ffffff;
+  border: 1px solid #e8ebee;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
 .grafico {
   margin: 20px 0 10px;
   overflow-x: auto;
@@ -596,7 +616,8 @@ footer.footer-proyecto {
 }
 
 @media (max-width: 860px) {
-  .nums {
+  .nums,
+  .tarjetas {
     grid-template-columns: 1fr;
   }
   h1 {
